@@ -1,0 +1,12 @@
+D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe.config
+D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Form1.resources
+D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Properties.Resources.resources
+D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.csproj.GenerateResource.Cache
+D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe
+D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.pdb
+D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\bin\Debug\AForge.Math.dll
+D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\bin\Debug\AForge.dll
+D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\bin\Debug\AForge.xml
+D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
+D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
+D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.csprojResolveAssemblyReference.cache
