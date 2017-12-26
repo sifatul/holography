@@ -9,4 +9,3 @@ D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\bin\Deb
 D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\bin\Debug\AForge.xml
 D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
 D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
-D:\workshop\holography\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.csprojResolveAssemblyReference.cache

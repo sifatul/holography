@@ -108,7 +108,7 @@ namespace WindowsFormsApplication1
 
             Complex[,] H = new Complex[s, s];
             Complex[,] film = new Complex[s, s];
-            Complex[][] Hologram = new Complex[s][];
+            Complex[,] Hologram = new Complex[s,s];
             Complex[][] O_F;
 
             int counter_y = 0;
@@ -117,7 +117,7 @@ namespace WindowsFormsApplication1
                 // O_image[i]=new Complex[s];
                 // film[i] = new Complex[s];
                 //H[i] = new Complex[s];
-                Hologram[i] = new Complex[s];
+              //  Hologram[i] = new Complex[s];
 
 
 
@@ -177,7 +177,7 @@ namespace WindowsFormsApplication1
                 d1 = d - Cut[i] * Hologram_sampling_interval / 2;
 
 
-                FourierTransform.FFT2(O_image, FourierTransform.Direction.Forward);
+                FourierTransform.FFT2(O_image, FourierTransform.Direction.Backward); // fft2
 
 
                 for (var p = 0; p < s; p++)
@@ -200,22 +200,23 @@ namespace WindowsFormsApplication1
 
                     for (int j = 0; j < s; j++)
                     {
+
                         film[i, j] = Complex.Multiply(O_image[i, j], H[i, j]);
 
                     }
 
                 }
 
-                FourierTransform.FFT2(film, FourierTransform.Direction.Backward);
+                FourierTransform.FFT2(film, FourierTransform.Direction.Forward);    //ifft2
 
 
-                for (int p = 0; p < Hologram.Length; p++)
+                for (int p = 0; p < s; p++)
                 {
 
 
-                    for (int j = 0; j < Hologram[0].Length; j++)
+                    for (int j = 0; j < s; j++)
                     {
-                        Hologram[i][j] = Complex.Add(Hologram[p][j], film[p, j]);
+                        Hologram[p, j] = Complex.Add(Hologram[p, j], film[p, j]);
 
                     }
 
@@ -230,13 +231,13 @@ namespace WindowsFormsApplication1
             for (int p = 0; p < Hologram.Length; p++)
             {
 
-                for (int j = 0; j < Hologram[0].Length; j++)
+                for (int j = 0; j < Hologram.Length; j++)
                 {
 
-                    phase_h[p, j] = Hologram[p][j].Phase + Math.PI;
-                    if (Hologram[p][j].Phase > max)
+                    phase_h[p, j] = Hologram[p,j].Phase + Math.PI;
+                    if (Hologram[p,j].Phase > max)
                     {
-                        max = Hologram[p][j].Phase;
+                        max = Hologram[p,j].Phase;
                     }
 
                 }
@@ -250,7 +251,7 @@ namespace WindowsFormsApplication1
             {
                 phase_h_image[p] = new double[s];
 
-                for (int j = 0; j < Hologram[0].Length; j++)
+                for (int j = 0; j < Hologram.Length; j++)
                 {
 
                     double temp = 255 * phase_h[p, j] / max;
