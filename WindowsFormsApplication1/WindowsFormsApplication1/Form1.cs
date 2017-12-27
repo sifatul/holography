@@ -160,8 +160,6 @@ namespace WindowsFormsApplication1
 
 
 
-
-
             Complex complex1 = new Complex(1, 1);
 
            
@@ -204,7 +202,8 @@ namespace WindowsFormsApplication1
             Complex[,] O_image;
             Complex[,] H = new Complex[s, s]; 
             Complex[,] film;
-
+            double[,] phase_h = new double[s, s];
+            double max = -1.0;
             for (int i = 0; i < Cut.Count; i++)
             {
                 film = new Complex[s, s];
@@ -237,11 +236,11 @@ namespace WindowsFormsApplication1
                         com1 = Complex.Exp(new Complex(0, (-complex1.Im * Math.PI * lambda * d1 * (Math.Pow(x[p, j], 2) + Math.Pow(y[p, j], 2)))));
                         com2 = Complex.Exp(new Complex(0, (complex1.Im * k * d1)));
                         H[p, j] = Complex.Multiply(com1, com2);
-
+                        film[p, j] = Complex.Multiply(O_image[p, j], H[p, j]);
                     }
 
                 }
-
+                /*
                 for (int p = 0; p < s; p++)
                 {
 
@@ -253,7 +252,7 @@ namespace WindowsFormsApplication1
                     }
 
                 }
-
+                */
                 FourierTransform.FFT2(film, FourierTransform.Direction.Forward);    //ifft2
 
 
@@ -267,6 +266,17 @@ namespace WindowsFormsApplication1
                     {
                         Hologram[p, j] = Complex.Add(Hologram[p, j], film[p, j]);
 
+                        if (i == Cut.Count - 1) {
+
+                            phase_h[p, j] = Hologram[p, j].Phase + Math.PI;
+                            if (phase_h[p, j] > max)
+                            {
+                                max = phase_h[p, j];
+                            }
+                        
+                        
+                        } // end of finding max and adding phase
+
                     }
 
                 }
@@ -275,10 +285,8 @@ namespace WindowsFormsApplication1
 
             } //end of Cut
 
-            //hologram is not accurate match
-            double[,] phase_h = new double[s, s];
-            double max = -1.0;
-            for (int p = 0; p < s; p++)
+            
+           /* for (int p = 0; p < s; p++)
             {
                 for (int j = 0; j <s; j++)
                 {
@@ -290,6 +298,7 @@ namespace WindowsFormsApplication1
                     }
                 }
             }
+            * */
 
            // Console.WriteLine(max);
             byte[,] phase_h_image = new byte[s,s];
@@ -308,27 +317,9 @@ namespace WindowsFormsApplication1
 
             }
             Bitmap bmp;
-            
-            /*Bitmap bmp = (Bitmap)((new ImageConverter()).ConvertFrom(phase_h_image));
-            PictureBox P = new PictureBox();          
-
-           
-            P.Image = bmp; 
-            P.Dock = DockStyle.Fill;
-            this.Controls.Add(P);
-            this.Show(); 
-            */
+         
 
             double d2 = d - o * 0.0001;
-
-
-            /*FresnelPropagation2
-
-             * 
-             * 
-             * 
-             * */
-
 
 
             for (var p = 0; p < s; p++)
@@ -339,8 +330,7 @@ namespace WindowsFormsApplication1
                 for (var j = 0; j < s; j++)
                 {
                     com2 = Complex.Exp(new Complex(0, (1 * k * -d2)));
-                    com1 = Complex.Exp(new Complex(0, (-1 * Math.PI * lambda * -d2 * (Math.Pow(x[p, j], 2) + Math.Pow(y[p, j], 2)))));
-                    
+                    com1 = Complex.Exp(new Complex(0, (-1 * Math.PI * lambda * -d2 * (Math.Pow(x[p, j], 2) + Math.Pow(y[p, j], 2)))));                    
                     H[p, j] = Complex.Multiply(com1, com2);
 
                 }
@@ -380,11 +370,7 @@ namespace WindowsFormsApplication1
                  }
 
              }
-
-
-
-           
-
+            
             
           bmp=  ToBitmap(O_F);
           PictureBox P = new PictureBox();
