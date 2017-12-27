@@ -10,6 +10,7 @@ using System.Windows.Forms;
 //using System.Numerics;
 using AForge.Math;
 using System.IO;
+using System.Drawing.Imaging;
 
 
 namespace WindowsFormsApplication1
@@ -27,7 +28,65 @@ namespace WindowsFormsApplication1
             InitializeComponent();
         }
 
+        private unsafe Bitmap ToBitmap(double[,] rawImage)
+        {
+            int width = rawImage.GetLength(1);
+            int height = rawImage.GetLength(0);
 
+            Bitmap Image = new Bitmap(width, height);
+            BitmapData bitmapData = Image.LockBits(
+                new Rectangle(0, 0, width, height),
+                ImageLockMode.ReadWrite,
+                PixelFormat.Format32bppArgb
+            );
+            ColorARGB* startingPosition = (ColorARGB*) bitmapData.Scan0;
+
+
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                {
+                    double color = rawImage[i, j];
+                    byte rgb = (byte)(color * 255);
+
+                    ColorARGB* position = startingPosition + j + i * width;
+                    position->A = 255;
+                    position->R = rgb;
+                    position->G = rgb;
+                    position->B = rgb;
+                }
+
+            Image.UnlockBits(bitmapData);
+            return Image;
+        }
+
+        public struct ColorARGB
+        {
+            public byte B;
+            public byte G;
+            public byte R;
+            public byte A;
+
+            public ColorARGB(Color color)
+            {
+                A = color.A;
+                R = color.R;
+                G = color.G;
+                B = color.B;
+            }
+
+            public ColorARGB(byte a, byte r, byte g, byte b)
+            {
+                A = a;
+                R = r;
+                G = g;
+                B = b;
+            }
+
+            public Color ToColor()
+            {
+                return Color.FromArgb(A, R, G, B);
+            }
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -108,18 +167,12 @@ namespace WindowsFormsApplication1
            
             
             Complex[,] Hologram = new Complex[s,s];
-            Complex[][] O_F;
+           
 
             int counter_y = 0;
             for (int i = 0; i < s; i++)
             {
-                // O_image[i]=new Complex[s];
-                // film[i] = new Complex[s];
-                //H[i] = new Complex[s];
-              //  Hologram[i] = new Complex[s];
-
-
-
+                
                 int counter_x = 0;
                 if (counter_y == s / 2)
                 {
@@ -164,16 +217,6 @@ namespace WindowsFormsApplication1
                     if (Cut[i] == obj_z[j])
                     {
 
-                        /* double[] temp = new double[6];
-                         temp[0] = obj_x[j];
-                         temp[1] = obj_y[j];
-                         temp[2] = obj_z[j];
-
-                         temp[3] = obj_r[j];
-                         temp[4] = obj_g[j];
-                         temp[5] = obj_b[j];
-                         O.AddRange(temp);
-                         */
                         O_image[Convert.ToInt32(obj_x[j]), Convert.ToInt32(obj_y[j])] = (Complex)obj_r[j];
                     }
                 }
@@ -193,7 +236,7 @@ namespace WindowsFormsApplication1
                     {
                         com1 = Complex.Exp(new Complex(0, (-complex1.Im * Math.PI * lambda * d1 * (Math.Pow(x[p, j], 2) + Math.Pow(y[p, j], 2)))));
                         com2 = Complex.Exp(new Complex(0, (complex1.Im * k * d1)));
-                        H[i, j] = Complex.Multiply(com1, com2);
+                        H[p, j] = Complex.Multiply(com1, com2);
 
                     }
 
@@ -205,7 +248,7 @@ namespace WindowsFormsApplication1
                     for (int j = 0; j < s; j++)
                     {
 
-                        film[i, j] = Complex.Multiply(O_image[i, j], H[i, j]);
+                        film[p, j] = Complex.Multiply(O_image[p, j], H[p, j]);
 
                     }
 
@@ -249,7 +292,7 @@ namespace WindowsFormsApplication1
             }
 
            // Console.WriteLine(max);
-            double[,] phase_h_image = new double[s,s];
+            byte[,] phase_h_image = new byte[s,s];
             for (int p = 0; p <s; p++)
             {
                
@@ -264,6 +307,17 @@ namespace WindowsFormsApplication1
 
 
             }
+            Bitmap bmp;
+            
+            /*Bitmap bmp = (Bitmap)((new ImageConverter()).ConvertFrom(phase_h_image));
+            PictureBox P = new PictureBox();          
+
+           
+            P.Image = bmp; 
+            P.Dock = DockStyle.Fill;
+            this.Controls.Add(P);
+            this.Show(); 
+            */
 
             double d2 = d - o * 0.0001;
 
@@ -284,8 +338,9 @@ namespace WindowsFormsApplication1
                 Complex com2;
                 for (var j = 0; j < s; j++)
                 {
-                    com1 = Complex.Exp(new Complex(0, (-complex1.Im * Math.PI * lambda * -d2 * (Math.Pow(x[p, j], 2) + Math.Pow(y[p, j], 2)))));
-                    com2 = Complex.Exp(new Complex(0, (complex1.Im * k * -d2)));
+                    com2 = Complex.Exp(new Complex(0, (1 * k * -d2)));
+                    com1 = Complex.Exp(new Complex(0, (-1 * Math.PI * lambda * -d2 * (Math.Pow(x[p, j], 2) + Math.Pow(y[p, j], 2)))));
+                    
                     H[p, j] = Complex.Multiply(com1, com2);
 
                 }
@@ -293,28 +348,62 @@ namespace WindowsFormsApplication1
             }
 
 
-            // O_F = FourierTransform2.FFT2(Hologram, "Forward");
+            FourierTransform.FFT2(Hologram, FourierTransform.Direction.Backward);  //  O = fft2(object);  
 
-            /* for (int p = 0; p < O_F.Length; p++)
+
+
+            Complex[,] originalR = new Complex[s, s];
+
+            for (int p = 0; p < s; p++)
+            {
+
+                for (int j = 0; j < s; j++)
+                {
+
+                    originalR[p, j] = Complex.Multiply(Hologram[p, j], H[p, j]); //hologram =ifft2(O.*H); = >    O_F =  O.*H
+
+                }
+
+            }
+
+
+            FourierTransform.FFT2(originalR, FourierTransform.Direction.Forward);  // hologram =ifft2(O_F)
+
+            double[,] O_F = new double[s,s];
+            for (int p = 0; p < s; p++)
              {
 
-                 for (int j = 0; j < O_F[0].Length; j++)
+                 for (int j = 0; j <s; j++)
                  {
-                     Hologram[p][j] = Complex.Multiply(O_F[p][j], H[p][j]);
+                     O_F[p,j] =originalR[p, j].Magnitude;
 
                  }
 
              }
-             * /
-             //Hologram = FourierTransform2.FFT2(film, "Backward");
 
 
 
+           
 
             
-             this.BackColor = Color.FromArgb(255, 102, 178);
-         */
+          bmp=  ToBitmap(O_F);
+          PictureBox P = new PictureBox();
 
+
+          P.Image = bmp;
+          P.Dock = DockStyle.Fill;
+          this.Controls.Add(P);
+          this.Show(); 
+            /*Bitmap bmp = (Bitmap)((new ImageConverter()).ConvertFrom(phase_h_image));
+            PictureBox P = new PictureBox();          
+
+           
+            P.Image = bmp; 
+            P.Dock = DockStyle.Fill;
+            this.Controls.Add(P);
+            this.Show(); */
+
+            
             System.Console.WriteLine("END");
         }// end of form
         //System.Console.WriteLine("Finished");
