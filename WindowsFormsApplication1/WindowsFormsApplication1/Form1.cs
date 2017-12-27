@@ -240,19 +240,8 @@ namespace WindowsFormsApplication1
                     }
 
                 }
-                /*
-                for (int p = 0; p < s; p++)
-                {
-
-                    for (int j = 0; j < s; j++)
-                    {
-
-                        film[p, j] = Complex.Multiply(O_image[p, j], H[p, j]);
-
-                    }
-
-                }
-                */
+              
+               
                 FourierTransform.FFT2(film, FourierTransform.Direction.Forward);    //ifft2
 
 
@@ -286,43 +275,34 @@ namespace WindowsFormsApplication1
             } //end of Cut
 
             
-           /* for (int p = 0; p < s; p++)
-            {
-                for (int j = 0; j <s; j++)
-                {
-
-                    phase_h[p, j] = Hologram[p,j].Phase + Math.PI;
-                    if (phase_h[p, j] > max)
-                    {
-                        max = phase_h[p, j];
-                    }
-                }
-            }
-            * */
-
-           // Console.WriteLine(max);
+               // Console.WriteLine(max);
             byte[,] phase_h_image = new byte[s,s];
+            double d2 = d - o * 0.0001;
             for (int p = 0; p <s; p++)
             {
-               
 
+                Complex com1;
+                Complex com2;
                 for (int j = 0; j < s; j++)
                 {
 
                     double temp = 255 * phase_h[p, j] / max;
                     phase_h_image[p,j] = System.Convert.ToByte(temp);
 
+                    com2 = Complex.Exp(new Complex(0, (1 * k * -d2)));
+                    com1 = Complex.Exp(new Complex(0, (-1 * Math.PI * lambda * -d2 * (Math.Pow(x[p, j], 2) + Math.Pow(y[p, j], 2)))));
+                    H[p, j] = Complex.Multiply(com1, com2);
+
                 }
 
 
             }
-            Bitmap bmp;
          
 
-            double d2 = d - o * 0.0001;
+           
 
 
-            for (var p = 0; p < s; p++)
+           /* for (var p = 0; p < s; p++)
             {    // fourier transform all values of x and y
 
                 Complex com1;
@@ -336,7 +316,7 @@ namespace WindowsFormsApplication1
                 }
 
             }
-
+            */
 
             FourierTransform.FFT2(Hologram, FourierTransform.Direction.Backward);  //  O = fft2(object);  
 
@@ -370,9 +350,9 @@ namespace WindowsFormsApplication1
                  }
 
              }
-            
-            
-          bmp=  ToBitmap(O_F);
+
+
+            Bitmap bmp = ToBitmap(O_F);
           PictureBox P = new PictureBox();
 
 
