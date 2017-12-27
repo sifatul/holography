@@ -102,12 +102,11 @@ namespace WindowsFormsApplication1
 
 
 
-            Complex[,] O_image = new Complex[s, s];
 
             Complex complex1 = new Complex(1, 1);
 
-            Complex[,] H = new Complex[s, s];
-            Complex[,] film = new Complex[s, s];
+           
+            
             Complex[,] Hologram = new Complex[s,s];
             Complex[][] O_F;
 
@@ -149,12 +148,17 @@ namespace WindowsFormsApplication1
 
             double d1;
 
+            Complex[,] O_image;
+            Complex[,] H = new Complex[s, s]; 
+            Complex[,] film;
 
             for (int i = 0; i < Cut.Count; i++)
             {
+                film = new Complex[s, s];
+                H = new Complex[s, s];
+                O_image = new Complex[s, s];
 
-                //Complex[][] O_image2 = new Complex[s][];
-                // temp[0] = new List<double>();  //for every unique value of z ( Cut) make an object/ layer which should have R,G,B
+
                 for (int j = 0; j < obj_z.Count; j++)
                 {
                     if (Cut[i] == obj_z[j])
@@ -210,6 +214,8 @@ namespace WindowsFormsApplication1
                 FourierTransform.FFT2(film, FourierTransform.Direction.Forward);    //ifft2
 
 
+                //until now the result is matched
+
                 for (int p = 0; p < s; p++)
                 {
 
@@ -223,39 +229,36 @@ namespace WindowsFormsApplication1
                 }
 
 
+
             } //end of Cut
 
-
+            //hologram is not accurate match
             double[,] phase_h = new double[s, s];
             double max = -1.0;
-            for (int p = 0; p < Hologram.Length; p++)
+            for (int p = 0; p < s; p++)
             {
-
-                for (int j = 0; j < Hologram.Length; j++)
+                for (int j = 0; j <s; j++)
                 {
 
                     phase_h[p, j] = Hologram[p,j].Phase + Math.PI;
-                    if (Hologram[p,j].Phase > max)
+                    if (phase_h[p, j] > max)
                     {
-                        max = Hologram[p,j].Phase;
+                        max = phase_h[p, j];
                     }
-
                 }
-
-
             }
 
-
-            double[][] phase_h_image = new double[s][];
-            for (int p = 0; p < Hologram.Length; p++)
+           // Console.WriteLine(max);
+            double[,] phase_h_image = new double[s,s];
+            for (int p = 0; p <s; p++)
             {
-                phase_h_image[p] = new double[s];
+               
 
-                for (int j = 0; j < Hologram.Length; j++)
+                for (int j = 0; j < s; j++)
                 {
 
                     double temp = 255 * phase_h[p, j] / max;
-                    //phase_h_image[p][j] = System.Convert.ToByte(temp);
+                    phase_h_image[p,j] = System.Convert.ToByte(temp);
 
                 }
 

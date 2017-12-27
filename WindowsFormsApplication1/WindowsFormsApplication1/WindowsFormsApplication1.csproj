@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="diffraction.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
