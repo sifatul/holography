@@ -11,15 +11,10 @@ using System.Windows.Forms;
 using AForge.Math;
 using System.IO;
 using System.Drawing.Imaging;
-
+using System.Diagnostics;
 
 namespace WindowsFormsApplication1
 {
-
-
-
-
-
 
     public partial class Form1 : Form
     {
@@ -92,6 +87,7 @@ namespace WindowsFormsApplication1
         {
 
 
+            
             String address = "D:/workshop/holography/WindowsFormsApplication1/WindowsFormsApplication1";
             
             String file_name = "/Tang25.txt";
@@ -99,7 +95,6 @@ namespace WindowsFormsApplication1
             file_manager file = new file_manager(file_name, address);
             file.read_coordinate();
             // file.write_coordinate_file(file.x, file.y, file.z, file.r, file.g, file.b);
-
 
             List<double> obj_x = new List<double>();
             List<double> obj_y = new List<double>();
@@ -124,6 +119,7 @@ namespace WindowsFormsApplication1
 
 
             }
+
 
             int o = 8;
             int t = 1;
@@ -204,60 +200,60 @@ namespace WindowsFormsApplication1
             Complex[,] film;
             double[,] phase_h = new double[s, s];
             double max = -1.0;
+
+
             for (int i = 0; i < Cut.Count; i++)
             {
                 film = new Complex[s, s];
                 H = new Complex[s, s];
                 O_image = new Complex[s, s];
+                d1 = d - Cut[i] * Hologram_sampling_interval / 2;
 
 
                 for (int j = 0; j < obj_z.Count; j++)
                 {
                     if (Cut[i] == obj_z[j])
                     {
-
                         O_image[Convert.ToInt32(obj_x[j]), Convert.ToInt32(obj_y[j])] = (Complex)obj_r[j];
                     }
                 }
+                
+                FourierTransform.FFT2(O_image, FourierTransform.Direction.Backward); // fft2    O_image = fft2(O_image); 
+                
+               // Stopwatch stopwatch = Stopwatch.StartNew(); //creates and start the instance of Stopwatch
+               
+                
 
-                d1 = d - Cut[i] * Hologram_sampling_interval / 2;
-
-
-                FourierTransform.FFT2(O_image, FourierTransform.Direction.Backward); // fft2
-
-
+                Complex com2 = Complex.Exp(new Complex(0, (1 * k * d1)));
                 for (var p = 0; p < s; p++)
-                {    // fourier transform all values of x and y
+                {    //  H = exp(1i*k*d1).*exp(-1i*pi*lambda*d1*(x.^2+y.^2));
 
-                    Complex com1;
-                    Complex com2;
+                    Complex com1;                    
                     for (var j = 0; j < s; j++)
                     {
-                        com1 = Complex.Exp(new Complex(0, (-complex1.Im * Math.PI * lambda * d1 * (Math.Pow(x[p, j], 2) + Math.Pow(y[p, j], 2)))));
-                        com2 = Complex.Exp(new Complex(0, (complex1.Im * k * d1)));
-                        H[p, j] = Complex.Multiply(com1, com2);
-                        film[p, j] = Complex.Multiply(O_image[p, j], H[p, j]);
+                        com1 = Complex.Exp(new Complex(0, (-1 * Math.PI * lambda * d1 * (Math.Pow(x[p, j], 2) + Math.Pow(y[p, j], 2)))));
+                       
+                        H[p, j] = Complex.Multiply(com1, com2);  // H = exp(1i*k*d1).*exp(-1i*pi*lambda*d1*(x.^2+y.^2));
+                        film[p, j] = Complex.Multiply(O_image[p, j], H[p, j]);  // lol =O_image.*H;
                     }
 
                 }
-              
-               
-                FourierTransform.FFT2(film, FourierTransform.Direction.Forward);    //ifft2
 
+                //////Stop();
+                //Console.WriteLine(stopwatch.ElapsedMilliseconds);
+                FourierTransform.FFT2(film, FourierTransform.Direction.Forward);    //ifft2    film3 =ifft2(lol); 
 
-                //until now the result is matched
-
+                
                 for (int p = 0; p < s; p++)
                 {
 
-
                     for (int j = 0; j < s; j++)
                     {
-                        Hologram[p, j] = Complex.Add(Hologram[p, j], film[p, j]);
+                        Hologram[p, j] = Complex.Add(Hologram[p, j], film[p, j]);  //  Hologram = Hologram+film3;
 
                         if (i == Cut.Count - 1) {
 
-                            phase_h[p, j] = Hologram[p, j].Phase + Math.PI;
+                            phase_h[p, j] = Hologram[p, j].Phase + Math.PI;    //phase_H = angle(Hologram) + pi;
                             if (phase_h[p, j] > max)
                             {
                                 max = phase_h[p, j];
@@ -274,56 +270,35 @@ namespace WindowsFormsApplication1
 
             } //end of Cut
 
-            
+         
                // Console.WriteLine(max);
             byte[,] phase_h_image = new byte[s,s];
             double d2 = d - o * 0.0001;
+            
+            Complex com3 = Complex.Exp(new Complex(0, (1 * k * -d2)));
             for (int p = 0; p <s; p++)
             {
 
                 Complex com1;
-                Complex com2;
+               
                 for (int j = 0; j < s; j++)
                 {
 
-                    double temp = 255 * phase_h[p, j] / max;
-                    phase_h_image[p,j] = System.Convert.ToByte(temp);
-
-                    com2 = Complex.Exp(new Complex(0, (1 * k * -d2)));
+                    double temp = 255 * phase_h[p, j] / max;   ///phase_H_image = uint8(255*phase_H/max(max(phase_H))); 
+                    phase_h_image[p, j] = System.Convert.ToByte(temp); 
+                    
                     com1 = Complex.Exp(new Complex(0, (-1 * Math.PI * lambda * -d2 * (Math.Pow(x[p, j], 2) + Math.Pow(y[p, j], 2)))));
-                    H[p, j] = Complex.Multiply(com1, com2);
+                    H[p, j] = Complex.Multiply(com1, com3);         //H = exp(1i*k*z).*exp(-1i*pi*lambda*z*(x.^2+y.^2));
 
                 }
 
 
             }
          
-
-           
-
-
-           /* for (var p = 0; p < s; p++)
-            {    // fourier transform all values of x and y
-
-                Complex com1;
-                Complex com2;
-                for (var j = 0; j < s; j++)
-                {
-                    com2 = Complex.Exp(new Complex(0, (1 * k * -d2)));
-                    com1 = Complex.Exp(new Complex(0, (-1 * Math.PI * lambda * -d2 * (Math.Pow(x[p, j], 2) + Math.Pow(y[p, j], 2)))));                    
-                    H[p, j] = Complex.Multiply(com1, com2);
-
-                }
-
-            }
-            */
-
+     
             FourierTransform.FFT2(Hologram, FourierTransform.Direction.Backward);  //  O = fft2(object);  
 
-
-
             Complex[,] originalR = new Complex[s, s];
-
             for (int p = 0; p < s; p++)
             {
 
@@ -345,30 +320,23 @@ namespace WindowsFormsApplication1
 
                  for (int j = 0; j <s; j++)
                  {
-                     O_F[p,j] =originalR[p, j].Magnitude;
+                     O_F[p, j] = originalR[p, j].Magnitude;  //abs(originalR)
 
                  }
 
              }
 
 
-            Bitmap bmp = ToBitmap(O_F);
+          Bitmap bmp = ToBitmap(O_F);
           PictureBox P = new PictureBox();
 
 
           P.Image = bmp;
           P.Dock = DockStyle.Fill;
           this.Controls.Add(P);
-          this.Show(); 
-            /*Bitmap bmp = (Bitmap)((new ImageConverter()).ConvertFrom(phase_h_image));
-            PictureBox P = new PictureBox();          
-
-           
-            P.Image = bmp; 
-            P.Dock = DockStyle.Fill;
-            this.Controls.Add(P);
-            this.Show(); */
-
+          this.Show();
+  
+       
             
             System.Console.WriteLine("END");
         }// end of form
@@ -377,31 +345,3 @@ namespace WindowsFormsApplication1
     }
 }// end of namespace
 
-
-/*
-
-                file_name = "fft.txt";
-                try
-                {
-                    System.Console.WriteLine("Start writing");
-
-
-                    System.IO.StreamWriter file2 = new System.IO.StreamWriter(address + file_name, true);
-                    for (var p = 0; p < s; p++)
-                    {    // fourier transform all values of x and y
-
-                        for (var j = 0; j < s; j++)
-                        {
-
-
-                            file2.Write(O_F[p][j] + " ");
-                           
-
-                            // file2.WriteLine(" ########################################################################### ");
-                        }
-                    }
-                }
-                catch (Exception ex12)
-                {
-                    System.Console.Write(ex12);
-  */
