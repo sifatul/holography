@@ -3,8 +3,6 @@ close all;
 clear all;
 clc;
 
-
-
 colorDevice = imaq.VideoDevice('kinect',1);
 %Create a System object for the depth device.
 
@@ -13,37 +11,34 @@ depthDevice = imaq.VideoDevice('kinect',2);
 
 step(colorDevice);
 step(depthDevice);
-%Load one frame from the device.
 
-colorImage = step(colorDevice);
-depthImage = step(depthDevice);
-%Extract the point cloud.
-
-ptCloud = pcfromkinect(depthDevice,depthImage,colorImage);
-%Initialize a point cloud player to visualize 3-D point cloud data. The axis is set appropriately to visualize the point cloud from Kinect.
-
-
+tic
 
 
 
 %Acquire and view 5 frames of live Kinect point cloud data.
 
-for i = 1:5    
+for i = 1:5   
    colorImage = step(colorDevice);  
    depthImage = step(depthDevice);
  
    ptCloud = pcfromkinect(depthDevice,depthImage,colorImage); 
-   [ptCloudOut,indices]= removeInvalidPoints(ptCloud); 
+   
   
      %colormap(gray)
    % pcshow(ptCloud)
    %view(player,ptCloudOut);
-end
+
 
 s = 1024; % size
 t = 1; % 放大倍数，以512为基准
 
-pcshow(ptCloudOut)
+roi = [-1,0.5;-1,0.5;-1,1.3];
+indices = findPointsInROI(ptCloud, roi);
+ptCloudB = select(ptCloud,indices);
+ptCloud=ptCloudB;
+[ptCloudOut,indices]= removeInvalidPoints(ptCloud); 
+
 
 % shift to positive axis 
 Obj(:,1) = ptCloudOut.Location(:,1) +min(ptCloudOut.Location(:,1))*-1 ; %x- axis
@@ -87,7 +82,7 @@ Obj(:,3)= Obj(:,3)*1;
 d = 0.25;
 % d = 0.5;
 % d  = Hologram_sampling_interval*(2*size_all)/lambda;
-figure; plot3(Obj(:,1),Obj(:,2),Obj(:,3),'.');xlabel ('x');ylabel ('y');ylabel ('z');title('Point Cloud');
+%figure; plot3(Obj(:,1),Obj(:,2),Obj(:,3),'.');xlabel ('x');ylabel ('y');ylabel ('z');title('Point Cloud');
 
 
 release(colorDevice);
@@ -125,7 +120,7 @@ film1 = film;
 
 
 
-tic
+
 for i=1:length(Cut)
     O = Obj(z==Cut(i),:);
     O_image = film1; % for GPU
@@ -146,7 +141,7 @@ for i=1:length(Cut)
 %     film = FresnelPropagation(O_image, dx, dy, d1, lambda);
     Hologram = Hologram+film;
 end
-toc
+
 dx = gather(dx);
 dy = gather(dy);
 Hologram = gather(Hologram);
@@ -159,6 +154,6 @@ phase_H_image = uint8(255*phase_H1/max(phase_H1)); %where is the use of phase_H_
     d2 = d - o*0.0001;
 % %     original = zeros(s);
     originalR = FresnelPropagation2(Hologram, x,y, -d2, lambda);
-    figure; imshow(abs(rot90(originalR)),[]);
-
-
+    figure; imshow(abs((originalR)),[]);
+end
+toc
