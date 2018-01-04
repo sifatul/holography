@@ -40,11 +40,15 @@ for i = 1:5
    %view(player,ptCloudOut);
 end
 
+s = 1024; % size
+t = 1; % 放大倍数，以512为基准
 
-min_of_obj = abs((min(min(ptCloudOut.Location)))) ;
-Obj(:,1) = ptCloudOut.Location(:,1)+min_of_obj ; %x- axis
-Obj(:,2) = ptCloudOut.Location(:,2)+min_of_obj ; %y- axis
-Obj(:,3) = ptCloudOut.Location(:,3) +min_of_obj ; %z- axis
+pcshow(ptCloudOut)
+
+% shift to positive axis 
+Obj(:,1) = ptCloudOut.Location(:,1) +min(ptCloudOut.Location(:,1))*-1 ; %x- axis
+Obj(:,2) = ptCloudOut.Location(:,2) +min(ptCloudOut.Location(:,2))*-1; %y- axis
+Obj(:,3) = ptCloudOut.Location(:,3) +min(ptCloudOut.Location(:,3))*-1; %z- axis
 
 
 
@@ -53,44 +57,17 @@ Obj(:,4) = double (ptCloudOut.Color(:,1))./255 ; % R
 Obj(:,5) = double (ptCloudOut.Color(:,2))./255 ; % G
 Obj(:,6) = double (ptCloudOut.Color(:,3))./255 ; % B
 
-%pcwrite(ptCloud,'sameple_pointCloud2','PLYFormat','binary');
-%fileID = fopen('test_pcl.txt','w');
 
-
-%fprintf(fileID,' %8f %8f %8f %8f %8f %8f \n', [ptCloudOut.Location,double(ptCloudOut.Color)]);
-
-%fclose(fileID);
-
-
-
-% Obj = load('cube15c.txt');
-%Obj = load('Tang25.txt');
-% Obj = load('mi25.txt');
-% Obj = load('3obj.txt');
-
-
-%{
-Obj(:,1)= round((Obj(:,1)+100).*5); %15
-Obj(:,2)= round((Obj(:,2)+50).*6); %15
-Obj(:,3) = -(Obj(:,3)-230);  % tang25
-%}
-
-%[~,ind,~]=unique(Obj(:, 1:2:3), 'rows', 'stable');
-%Obj=Obj(sort(ind), :);
-
-
-
-s = 1024; % size
-t = 1; % 放大倍数，以512为基准
-
-
-Obj(:,1) = round ((s./max (Obj(:,1))).* Obj(:,1) ) -2; % x- axis 
-Obj(:,2) =  round ((s./max (Obj(:,2))).* Obj(:,2) -2); % y- axis 
-Obj(:,3) = round ((s./max ( Obj(:,3) )).* Obj(:,3) -2); % z- axis 
+% scaling for 1024 
+Obj(:,1) = round (((s-10)/max (Obj(:,1))).* Obj(:,1) ) +1; % x- axis 
+Obj(:,2) =  round (((s-10)./max (Obj(:,2))).* Obj(:,2) ) +1; % y- axis 
+Obj(:,3) = round (((s-10)./max ( Obj(:,3) )).* Obj(:,3) ) +1; % z- axis 
 
 
 [C,ia,ic] = unique(Obj(:,1:2),'rows' , 'stable');
 Obj= Obj(ia,:);
+
+
 
 
 lambda = 532e-9;
