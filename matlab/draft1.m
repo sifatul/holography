@@ -47,13 +47,15 @@ y_cpu = [0:floor((Ny-1)/2) -ceil((Ny+1)/2)+1:-1]'*ones(1,Nx)*fy;
 x=gpuArray(x_cpu);
 y=gpuArray(y_cpu);
 r=(x.^2+y.^2);
+figure;
+
 tic
 
 
 
 %Acquire and view 5 frames of live Kinect point cloud data.
 
-for i = 1:1   
+for i = 1:inf  
     colorImage = step(colorDevice);  
     depthImage = step(depthDevice);
 
@@ -66,21 +68,24 @@ for i = 1:1
     [ptCloudOut,indices]= removeInvalidPoints(ptCloud); 
 
     Location = gpuArray(ptCloudOut.Location);
-
+    
+    Obj0=  gpuArray( Location );
 
     % shift to positive axis 
-    Obj(:,1) = Location(:,1) +min(Location(:,1))*-1 ; %x- axis
-    Obj(:,2) = Location(:,2) +min(Location(:,2))*-1; %y- axis
-    Obj(:,3) = Location(:,3) +min(Location(:,3))*-1; %z- axis
+    Obj0(:,1) = Location(:,1) +min(Location(:,1))*-1 ; %x- axis
+    Obj0(:,2) = Location(:,2) +min(Location(:,2))*-1; %y- axis
+    Obj0(:,3) = Location(:,3) +min(Location(:,3))*-1; %z- axis
 
 
 
+    Obj2=  gpuArray(ptCloudOut.Location );
+    
+    Obj2(:,1) = double (ptCloudOut.Color(:,1))./255 ; % R
+    Obj2(:,2) = double (ptCloudOut.Color(:,2))./255 ; % G
+    Obj2(:,3) = double (ptCloudOut.Color(:,3))./255 ; % B
 
-    Obj(:,4) = double (ptCloudOut.Color(:,1))./255 ; % R
-    Obj(:,5) = double (ptCloudOut.Color(:,2))./255 ; % G
-    Obj(:,6) = double (ptCloudOut.Color(:,3))./255 ; % B
-
-
+    Obj=[gather(Obj0),gather(Obj2)];
+    
     % scaling for 1024 
     Obj(:,1) = round (((s-10)/max (Obj(:,1))).* Obj(:,1) ) +1; % x- axis 
     Obj(:,2) =  round (((s-10)./max (Obj(:,2))).* Obj(:,2) ) +1; % y- axis 
@@ -159,7 +164,7 @@ for i = 1:1
 toc
 
     originalR = FresnelPropagation2(Hologram, x,y, -d2, lambda);
-    figure; imshow(abs((originalR)),[]);
+     imshow(abs(rot90(originalR,-1)),[]);
 
 
 end %end of realtime acquisition loop
