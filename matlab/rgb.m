@@ -15,9 +15,12 @@ step(colorDevice);
 step(depthDevice);
 s = 1024; 
 t = 1; 
-lambda = 532e-9;
+lambdr = 532e-9;
+lambdg = 532e-9;
+lambdb = 473e-9;
+
 o=8;
-k = 2*pi/lambda;
+
 d = 0.25;
 d2 = d - o*0.0001;
 % Hologram_sampling_interval =6.4e-6;
@@ -54,7 +57,7 @@ figure;
 
 %Acquire infinite frames
 for i = 1:inf  
-tic
+
     colorImage = step(colorDevice);  
     depthImage = step(depthDevice);
  
@@ -96,22 +99,6 @@ tic
     Obj= Obj(ia,:);
 
 
-
-
-
-
-    % Obj(:,1)= Obj(:,1)*t;
-    % Obj(:,2)= Obj(:,2)*t;
-    % Obj(:,3)= Obj(:,3)*1;
-
-
-    % d = 0.5;
-    % d  = Hologram_sampling_interval*(2*size_all)/lambda;
-    %figure; plot3(Obj(:,1),Obj(:,2),Obj(:,3),'.');xlabel ('x');ylabel ('y');ylabel ('z');title('Point Cloud');
-
-
-
-
     Obj = gather(Obj);
 
 
@@ -124,47 +111,68 @@ tic
     % % % GPU
 
 
-
-
     
-    image = gpuArray(image_cpu);
+    %image = gpuArray(image_cpu);
     film = gpuArray(film_cpu);
-    Hologram = gpuArray(Hologram_cpu);
-    
+    Hologram_R = gpuArray(Hologram_cpu);
+    Hologram_B = gpuArray(Hologram_cpu);
+    Hologram_G = gpuArray(Hologram_cpu);
 
 
     film1 = film;
 
     for i=1:length(Cut)
         O = Obj(z==Cut(i),:);
-        O_image = film1; % for GPU
+        O_image_R = film1; % for GPU
+        O_image_G = film1; % for GPU
+        O_image_B = film1; % for GPU
         
-        test =sub2ind(size(O_image), O(:,1), O(:,2));
-        O_image(test)=O(:,4);
+        O_image_R(sub2ind(size(film1), O(:,1), O(:,2)))=O(:,4);
+        O_image_G(sub2ind(size(film1), O(:,1), O(:,2)))=O(:,5);
+        O_image_B(sub2ind(size(film1), O(:,1), O(:,2)))=O(:,6);
         
-        O_image = fft2(O_image); 
+        O_image_R = fft2(O_image_R); 
+        O_image_G = fft2(O_image_G); 
+        O_image_B = fft2(O_image_B); 
+        
         d1 = d - Cut(i)*Hologram_sampling_interval/2;
-        H = exp(1i*k*d1).*exp(-1i*pi*lambda*d1*r);   %Fourier transform of h
+        H_R = exp(1i*(2*pi/lambdr)*d1).*exp(-1i*pi*lambdr*d1*r);   %Fourier transform of h
+        H_G = exp(1i*(2*pi/lambdg)*d1).*exp(-1i*pi*lambdg*d1*r);   %Fourier transform of h
+        H_B = exp(1i*(2*pi/lambdb)*d1).*exp(-1i*pi*lambdb*d1*r);   %Fourier transform of h
         
-        film =O_image.*H;  
-        film =ifft2(film);   
+        film_R =O_image_R.*H_R;
+        film_G =O_image_G.*H_G;
+        film_B =O_image_B.*H_B;
         
-        Hologram = Hologram+film;
+        
+        film_R =ifft2(film_R);
+        film_G =ifft2(film_G);
+        film_B =ifft2(film_B);
+        
+        Hologram_R = Hologram_R+film_R;
+        Hologram_G = Hologram_G+film_G;
+        Hologram_B = Hologram_B+film_B;
     end
 
+    Hologram_R = gather(Hologram_R);
+    Hologram_G = gather(Hologram_G);
+    Hologram_B = gather(Hologram_B);
 
-    
-   % phase_H1 = angle(Hologram) + pi;
-    %phase_H_image = uint8(255*phase_H1/max(phase_H1)); %where is the use of phase_H_image
-    
-    dx = gather(dx);
-    dy = gather(dy);
-    Hologram = gather(Hologram);
+    originalR = FresnelPropagation2(Hologram_R, x,y, -d2, lambdr);
+    originalG = FresnelPropagation2(Hologram_G, x,y, -d2, lambdg);
+    originalB = FresnelPropagation2(Hologram_B, x,y, -d2, lambdb);
+     %imshow(abs(rot90(originalR,-1)),[]);
 
-
-toc
-    originalR = FresnelPropagation2(Hologram, x,y, -d2, lambda);
-     imshow(abs(rot90(originalR,-1)),[]);
+      originalR= abs(rot90(originalR,-1));
+      originalG= abs(rot90(originalG,-1));
+      originalB= abs(rot90(originalB,-1));
+     
+      rgbImage = cat(3, originalR, originalG, originalB);
+     
+      imshow(rgbImage,[]);
+      
+      %RRR=abs(rot90(originalR,-1)); % storing red image 
+     
 
 
 end %end of realtime acquisition loop
