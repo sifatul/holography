@@ -23,29 +23,23 @@ d2 = d - o*0.0001;
 % Hologram_sampling_interval =6.4e-6;
 Hologram_sampling_interval =7.4e-6;
                               
-dx_cpu = Hologram_sampling_interval;   %      
-dy_cpu = Hologram_sampling_interval;   %    
+dx = Hologram_sampling_interval;   %      
+dy = Hologram_sampling_interval;   %    
  
-dx = gpuArray(dx_cpu);
-dy = gpuArray(dy_cpu);
 
 
 roi = [-1,0.5;-1,0.5;-1,1.3];
 
-image_cpu = zeros(s);
+image = zeros(s);
 film = zeros(s);
-Hologram_cpu = zeros(s);
+Hologram = zeros(s);
 
 
 [Ny, Nx] = size(film); 
-fx = 1./(Nx*dx_cpu);
-fy = 1./(Ny*dy_cpu);  
-x_cpu = ones(Ny,1)*[0:floor((Nx-1)/2) -ceil((Nx+1)/2)+1:-1]*fx;
-y_cpu = [0:floor((Ny-1)/2) -ceil((Ny+1)/2)+1:-1]'*ones(1,Nx)*fy;
-
-x=gpuArray(x_cpu);
-y=gpuArray(y_cpu);
-
+fx = 1./(Nx*dx);
+fy = 1./(Ny*dy);  
+x = ones(Ny,1)*[0:floor((Nx-1)/2) -ceil((Nx+1)/2)+1:-1]*fx;
+y = [0:floor((Ny-1)/2) -ceil((Ny+1)/2)+1:-1]'*ones(1,Nx)*fy;
 
 r=(x.^2+y.^2);
 figure;
@@ -70,6 +64,7 @@ for i = 1:inf
     [ptCloudOut,indices]= removeInvalidPoints(ptCloudB); 
  
     Location = (ptCloudOut.Location);
+ 
     
     %Obj0= Location
     % shift to positive axis 
@@ -97,18 +92,7 @@ for i = 1:inf
     Obj= Obj(ia,:);
 
 
-
-
-
-
-    % Obj(:,1)= Obj(:,1)*t;
-    % Obj(:,2)= Obj(:,2)*t;
-    % Obj(:,3)= Obj(:,3)*1;
-
-
-    % d = 0.5;
-    % d  = Hologram_sampling_interval*(2*size_all)/lambda;
-    %figure; plot3(Obj(:,1),Obj(:,2),Obj(:,3),'.');xlabel ('x');ylabel ('y');ylabel ('z');title('Point Cloud');
+    figure; plot3(Obj(:,1),Obj(:,2),Obj(:,3),'.');xlabel ('x');ylabel ('y');ylabel ('z');title('Point Cloud');
 
 
 
@@ -121,26 +105,12 @@ for i = 1:inf
     Cut = str2double (categories(A));
 
 
-
-    % % % GPU
-
-
-
-
-
-    Hologram = gpuArray(Hologram_cpu);
-    
-
-
     film1 = film;
-    
-     film1 = gpuArray(film1);
 
     for i=1:length(Cut)
         O = Obj(z==Cut(i),:);
         O_image = film1; % for GPU
         
-
         test =sub2ind(size(O_image), O(:,1), O(:,2));
         O_image(test)=O(:,4);
         
@@ -154,20 +124,22 @@ for i = 1:inf
         Hologram = Hologram+film;
     end
 
-    clear film1;
-    clear Obj;
-    phase_H1 = angle(Hologram) + pi;
-    phase_H_image = uint8(255*phase_H1/max(phase_H1)); %where is the use of phase_H_image
+
     
-    dx = gather(dx);
-    dy = gather(dy);
-    Hologram = gather(Hologram);
+    phase_H = angle(Hologram) + pi;
+    phase_H_image = uint8(255*phase_H/max(max(phase_H)));
+   % imwrite(phase_H_image, 'testing.bmp', 'bmp');
+   
+    clear Obj;
+    clear Hologram;
+    clear phase_H_image;
+   % Hologram = gather(Hologram);
 
 
 
     originalR = FresnelPropagation2(Hologram, x,y, -d2, lambda);
     imshow(abs(rot90(originalR,-1)),[]);
-    clear Hologram;
+
 
 end %end of realtime acquisition loop
 

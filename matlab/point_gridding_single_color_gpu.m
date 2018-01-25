@@ -120,17 +120,8 @@ for i = 1:inf
     A = categorical(z);
     Cut = str2double (categories(A));
 
-
-
-    % % % GPU
-
-
-
-
-
     Hologram = gpuArray(Hologram_cpu);
     
-
 
     film1 = film;
     
@@ -156,11 +147,10 @@ for i = 1:inf
 
     clear film1;
     clear Obj;
-    phase_H1 = angle(Hologram) + pi;
-    phase_H_image = uint8(255*phase_H1/max(phase_H1)); %where is the use of phase_H_image
+    phase_H = angle(Hologram) + pi;
+    phase_H_image = uint8(255*phase_H/max(max(phase_H)));
+   % imwrite(phase_H_image, 'testing.bmp', 'bmp');
     
-    dx = gather(dx);
-    dy = gather(dy);
     Hologram = gather(Hologram);
 
 

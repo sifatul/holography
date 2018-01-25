@@ -33,11 +33,11 @@ dy = gpuArray(dy_cpu);
 roi = [-1,0.5;-1,0.5;-1,1.3];
 
 image_cpu = zeros(s);
-film = zeros(s);
+film_cpu = zeros(s);
 Hologram_cpu = zeros(s);
 
 
-[Ny, Nx] = size(film); 
+[Ny, Nx] = size(film_cpu); 
 fx = 1./(Nx*dx_cpu);
 fy = 1./(Ny*dy_cpu);  
 x_cpu = ones(Ny,1)*[0:floor((Nx-1)/2) -ceil((Nx+1)/2)+1:-1]*fx;
@@ -133,14 +133,11 @@ for i = 1:inf
 
 
     film1 = film;
-    
-     film1 = gpuArray(film1);
 
     for i=1:length(Cut)
         O = Obj(z==Cut(i),:);
         O_image = film1; % for GPU
         
-
         test =sub2ind(size(O_image), O(:,1), O(:,2));
         O_image(test)=O(:,4);
         
@@ -154,8 +151,8 @@ for i = 1:inf
         Hologram = Hologram+film;
     end
 
-    clear film1;
-    clear Obj;
+
+    
     phase_H1 = angle(Hologram) + pi;
     phase_H_image = uint8(255*phase_H1/max(phase_H1)); %where is the use of phase_H_image
     
@@ -166,8 +163,8 @@ for i = 1:inf
 
 
     originalR = FresnelPropagation2(Hologram, x,y, -d2, lambda);
-    imshow(abs(rot90(originalR,-1)),[]);
-    clear Hologram;
+     imshow(abs(rot90(originalR,-1)),[]);
+
 
 end %end of realtime acquisition loop
 

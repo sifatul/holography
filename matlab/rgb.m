@@ -56,8 +56,9 @@ figure;
 
 
 %Acquire infinite frames
-for i = 1:inf  
+for P = 1:inf  
 
+ tic
     colorImage = step(colorDevice);  
     depthImage = step(depthDevice);
  
@@ -121,8 +122,8 @@ for i = 1:inf
 
     film1 = film;
 
-    for i=1:length(Cut)
-        O = Obj(z==Cut(i),:);
+    for P=1:length(Cut)
+        O = Obj(z==Cut(P),:);
         O_image_R = film1; % for GPU
         O_image_G = film1; % for GPU
         O_image_B = film1; % for GPU
@@ -135,7 +136,7 @@ for i = 1:inf
         O_image_G = fft2(O_image_G); 
         O_image_B = fft2(O_image_B); 
         
-        d1 = d - Cut(i)*Hologram_sampling_interval/2;
+        d1 = d - Cut(P)*Hologram_sampling_interval/2;
         H_R = exp(1i*(2*pi/lambdr)*d1).*exp(-1i*pi*lambdr*d1*r);   %Fourier transform of h
         H_G = exp(1i*(2*pi/lambdg)*d1).*exp(-1i*pi*lambdg*d1*r);   %Fourier transform of h
         H_B = exp(1i*(2*pi/lambdb)*d1).*exp(-1i*pi*lambdb*d1*r);   %Fourier transform of h
@@ -174,7 +175,7 @@ for i = 1:inf
       %RRR=abs(rot90(originalR,-1)); % storing red image 
      
 
-
+toc
 end %end of realtime acquisition loop
 
 release(colorDevice);
