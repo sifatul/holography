@@ -1,129 +1,92 @@
-%Main program of hologram generation by wavefront recording plane method
-%by Openholo library project
-%2017-10-30 update
-%
-clc;clear;close all;%% Input the object and prameter
+addpath('D:\Mathlab\wrp\data');
+addpath('D:\My Research\holography\matlab\wrp\libs') ;
+addpath('D:\Mathlab\wrp\data_scaled');
+clc;clear;close all;
 
-load tea_pot.mat;
-          % Hologram sampling interval
+% papilon
+% obj(:,1) = obj(:,1)/2.25;
+% obj(:,2) = obj(:,2)/2.25;
+% obj(:,3) = obj(:,3)/80 ;
 
-%figure; plot3(Obj(:,1),Obj(:,2),Obj(:,3),'.');xlabel ('x');ylabel ('y');zlabel ('z');title('Point Cloud');
-
-Obj(:,1)=(Obj(:,1)/40000 -0.0002 ).*1;
-Obj(:,2)= (Obj(:,2)/20000 )+1.5;
-Obj(:,3)= (Obj(:,3)/30000);
-
-figure; plot3(Obj(:,1),Obj(:,2),Obj(:,3),'.');xlabel ('x');ylabel ('y');zlabel ('z');title('Point Cloud');
+% zhao %maximum 120 wrp
+% obj(:,1) = (obj(:,1)/450);
+% obj(:,2) = (obj(:,2)/450);
+% obj(:,3) = (obj(:,3)/20); 
+%  
+%% medieval
+% medieval
+% obj(:,1) = obj(:,1)*3; 
+% obj(:,2) = obj(:,2)*3;  
+% obj(:,3) = obj(:,3)/20; 
 
 %% 
+three_object  
+obj(:,1) = obj(:,1)*3.5; 
+obj(:,2) = obj(:,2)*3.5;  
+obj(:,3) = obj(:,3)*50;   
 
-lambda = 532e-9;                                % Wave length
-k = 2*pi/lambda;       
-Hologram_resolution=1025;                       % Hologram resolution     
-Hologram_sampling_interval = 3.9e-6;            % Hologram sampling interval
+max(obj)
+min(obj)
+% max(obj) - min(obj)
+obj_depth = max(obj(:,3)) - min(obj(:,3))
+d = 0.15;
 
-min_z = min(Obj(:,2));
-max_z = max(Obj(:,2));
-mid_z = (max_z-min_z)./2;
-
-obj1= Obj(Obj(:,2)<= min_z+mid_z,:); 
-
-figure; plot3(obj1(:,1),obj1(:,2),obj1(:,3),'.');xlabel ('x');ylabel ('y');zlabel ('z');title('Point Cloud');
-
-obj2= Obj(Obj(:,2) > min_z+mid_z,:); 
-figure; plot3(obj2(:,1),obj2(:,2),obj2(:,3),'.');xlabel ('x');ylabel ('y');zlabel ('z');title('Point Cloud');
+file_type = '.bmp';
+project_name = mfilename;
 
 
-%% setting WRP1
 
+Hologram_resolution_x = 1980;  
+Hologram_resolution_y = 1024;  % Hologram resolution  
+Hologram_resolution = strcat(num2str(Hologram_resolution_x),'X', num2str(Hologram_resolution_y)) ;
+Hologram_sampling_interval = 7.4e-6; %8e-6;%            % Hologram sampling interval
 
-z_wrp1 = max(obj1(:,2)) + 0.0002;  %  WRP location
-z= z_wrp1-obj1(:,2);
-
-
-N=round(abs(lambda.*z./(Hologram_sampling_interval^2)/2)+0.5).*2-1;        %sampling size of N
-
-Nx = round(obj1(:,1)./Hologram_sampling_interval)+(Hologram_resolution-1)/2;  
-Ny = round(obj1(:,3)./Hologram_sampling_interval)+(Hologram_resolution-1)/2;
-
-size_obj = length(obj1(:,1));
-Hologram_wrp = zeros(Hologram_resolution);
-
-for o = 1: size_obj
-    
-    %fprintf('%d\n',o);  
-    [y_run, x_run]= meshgrid((-(N(o)-1)/2:(N(o)-1)/2)*Hologram_sampling_interval,(-(N(o)-1)/2:(N(o)-1)/2)*Hologram_sampling_interval);
-    r = sign(z(o))*sqrt(z(o)^2 + y_run.^2 + x_run.^2);
-    Sub_hologram = exp(1j*rand*2*pi)*exp(1j*k*r)./r;   
-    
-    temp=zeros(Hologram_resolution+N(o), Hologram_resolution+N(o));    
-    temp(Nx(o):Nx(o)+N(o)-1,Ny(o):Ny(o)+N(o)-1)= Sub_hologram;
-    Hologram_wrp=Hologram_wrp+temp((N(o)+1)/2:Hologram_resolution+(N(o)-1)/2,(N(o)+1)/2:Hologram_resolution+(N(o)-1)/2);  
-%     figure,imshow(Hologram_wrp)
+Nxx = ( round(obj(:,1)./Hologram_sampling_interval)+(Hologram_resolution_x)/2);  
+Nyy = (round (obj(:,2)./Hologram_sampling_interval)+(Hologram_resolution_y)/2 );
+lambda = [632.8e-9 532e-9 473e-9]; %RGB; 
  
-end
 
-%% Fresnel Propagation
+obj_z = obj(:,3);  
+Cut = sort(unique(obj_z));
 
-ROWS= Hologram_resolution;                                     
-COLS= Hologram_resolution;
+
+ROWS= Hologram_resolution_x;                                     
+COLS= Hologram_resolution_y;
 v=Hologram_sampling_interval.*(ones(COLS,1)*(-ROWS/2:ROWS/2-1))';
 h=Hologram_sampling_interval.*(ones(ROWS,1)*(-COLS/2:COLS/2-1));
 
-d= 0.05
-WRPHologram1 = FresnelPropagation(Hologram_wrp, Hologram_sampling_interval, Hologram_sampling_interval, d, lambda);
-d2 = d+0.002 - 6*0.0002;
-original = FresnelPropogation(k,v, h,-d2,WRPHologram1);
-figure; imshow(abs(original),[]);
-
-
-%% setting WRP2
-
-z_wrp2 = max(obj2(:,2)) + 0.0002;  %  WRP location
-z = z_wrp2-obj2(:,2);
-
-N=round(abs(lambda.*z./(Hologram_sampling_interval^2)/2)+0.5).*2-1;        %sampling size of N
-
-Nx = round(obj2(:,1)./Hologram_sampling_interval)+(Hologram_resolution-1)/2;  
-Ny = round(obj2(:,3)./Hologram_sampling_interval)+(Hologram_resolution-1)/2;
-
-size_obj = length(obj2(:,1));
-Hologram_wrp2 = zeros(Hologram_resolution);
-
-for o = 1: size_obj
+% total_wrp_list = (105:125);
+total_wrp_list = (2:105);
+% saving_dir = 'D:\Mathlab\wrp\';
+% sub_dir = strcat(project_name,'\',obj_name,sprintf('_%0.9f',Hologram_sampling_interval),'\',num2str(Hologram_resolution),'\obj_depth',num2str(obj_depth),'\d_',num2str(d),'\layers_',sprintf('%d',length(Cut)));
+% mkdir(sub_dir);
+% focus_location ='hand_';
+% file_name = strcat(focus_location,'time_10_to_',sprintf('%d',Hologram_resolution),'.txt');
+% full_file_name = fullfile(sub_dir, file_name);
+% fileID = fopen(full_file_name,'w'); 
+prev_wrp_no= -1;
+   original=zeros(Hologram_resolution_x,Hologram_resolution_y,3); 
+ for color_index = 1:length(lambda)  %iterate each color
+    k = 2*pi/lambda(color_index);   
+    WRPHologram =  zeros(Hologram_resolution_x,Hologram_resolution_y);
+    WRPHologram2 =  zeros(Hologram_resolution_x,Hologram_resolution_y);
     
-    %fprintf('%d\n',o);  
-    [y_run, x_run]= meshgrid((-(N(o)-1)/2:(N(o)-1)/2)*Hologram_sampling_interval,(-(N(o)-1)/2:(N(o)-1)/2)*Hologram_sampling_interval);
-    r = sign(z(o))*sqrt(z(o)^2 + y_run.^2 + x_run.^2);
-    Sub_hologram = exp(1j*rand*2*pi)*exp(1j*k*r)./r;   
+    size_of_one_depth_range = round(length(Cut) / total_wrp);
+    n=numel(Cut);
+    m=fix(n/size_of_one_depth_range);
+    p=mod(n,size_of_one_depth_range);
+    depth_ranges =[mat2cell(Cut(1:m*size_of_one_depth_range),size_of_one_depth_range*ones(m,1),1);{Cut(size_of_one_depth_range*m+1:size_of_one_depth_range*m+p)}];
     
-    temp=zeros(Hologram_resolution+N(o), Hologram_resolution+N(o));    
-    temp(Nx(o):Nx(o)+N(o)-1,Ny(o):Ny(o)+N(o)-1)= Sub_hologram;
-    Hologram_wrp2=Hologram_wrp2+temp((N(o)+1)/2:Hologram_resolution+(N(o)-1)/2,(N(o)+1)/2:Hologram_resolution+(N(o)-1)/2);  
-%     figure,imshow(Hologram_wrp)
- 
-end
+    if(cellfun(@isempty, depth_ranges(end)))
+        depth_ranges(end)=[];
+    end
+    
+    if(length(depth_ranges)==prev_wrp_no)
+        continue;
+    else
+        prev_wrp_no = length(depth_ranges);
+    end
+    
+ end
 
-%% Fresnel Propagation
-
-ROWS= Hologram_resolution;                                     
-COLS= Hologram_resolution;
-v=Hologram_sampling_interval.*(ones(COLS,1)*(-ROWS/2:ROWS/2-1))';
-h=Hologram_sampling_interval.*(ones(ROWS,1)*(-COLS/2:COLS/2-1));
-d= 0.05;
-
-WRPHologram2 = FresnelPropagation(Hologram_wrp2, Hologram_sampling_interval, Hologram_sampling_interval, d, lambda);
-  
-d2 = d+0.002 - 6*0.0002;
-
-original = FresnelPropogation(k,v, h,-d2,WRPHologram2);
-figure; imshow(abs(original),[]);
-%% final reconstruction
-
-WRPHologram = WRPHologram2+ WRPHologram1;
-d3 = 0.05; %0.081 any othe two CGS works best
-original = FresnelPropogation(k,v, h,-d3,WRPHologram);
-figure; imshow(rot90(abs(original)),[]);
-
-%do interpolation or increase intensity in testing.m
 
