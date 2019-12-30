@@ -11,9 +11,9 @@ clc;clear;close all;clear all;
 
 %% medieval
 % medieval
-% obj(:,1) = obj(:,1)*3;
-% obj(:,2) = obj(:,2)*3;
-% obj(:,3) = obj(:,3)/20;
+% obj(:,1) = (obj(:,1))*1.7;
+% obj(:,2) = (obj(:,2))*1.7;
+% obj(:,3) = obj(:,3)/7;
 
 
 %%
@@ -248,9 +248,9 @@ obj_c = double(ptCloud2.Color)/256 ;
 
 %%
 % zhao
-% obj(:,1) = (obj(:,1)/400);
-% obj(:,2) = (obj(:,2)/400);
-% obj(:,3) = (obj(:,3)/4);
+% obj(:,1) = (obj(:,1)/500);
+% obj(:,2) = (obj(:,2)/500);
+% obj(:,3) = (obj(:,3)/8);
 
 
 
@@ -279,30 +279,161 @@ obj_c = double(ptCloud2.Color)/256 ;
 % obj(:,2) = (obj(:,2)-0.0002)*4  ;
 % obj(:,3) = obj(:,3)*150;
 % four_items_new
-% obj(:,1) = ((obj(:,1)-0.16 )/190);
-% obj(:,2) = (obj(:,2)+1.8 )/2000;
-% obj(:,3) = (obj(:,3))/5;
-three_object
-
-obj(:,1) = (obj(:,1)+0.0002).*2.5  ;
-obj(:,2) = obj(:,2)*2.2  ;
-obj(:,3) = obj(:,3)*60;
-
-
-max(obj)
-min(obj)
-
-% max(obj) - min(obj)
-obj_depth = max(obj(:,3)) - min(obj(:,3))
-d = obj_depth*9.5;
+% obj(:,1) = ((obj(:,1)-0.16 )/300);
+% obj(:,2) = (obj(:,2)+1.8 )/2500;
+% obj(:,3) = (obj(:,3))/10;
+% three_object
+% 
+% obj(:,1) = (obj(:,1)+0.0002).*2.5  ;
+% obj(:,2) = obj(:,2)*2.2  ;
+% obj(:,3) = obj(:,3)*80;
 
 
+ 
+
+
+
+% temp  
+% obj(:,1) = ((obj(:,1) )/300);
+% obj(:,2) = (obj(:,2)+0.5 )/800;
+% obj(:,3) = (obj(:,3))/12;
+
+
+% three_object		
+% 		
+%  
+% obj(:,1) = (obj(:,1)+0.0002).*3  ;
+% obj(:,2) = obj(:,2)*3  ;
+% obj(:,3) = obj(:,3)*150;
+% % 		
+
+% mm
+% obj(:,1) = (obj(:,1)+1 )./780   ;
+% obj(:,2) = obj(:,2)./620   ;
+% obj(:,3) = obj(:,3)/6;
+% d= 0.25; p = 166;
+
+% books2		
+% obj(:,1) = (obj(:,1)+0.5)./900   ;		
+% obj(:,2) = (obj(:,2)+0.8)./2200   ;		
+% obj(:,3) = obj(:,3)/8;		
+
+% book_cube_chicken_cup			
+% obj(:,1) = (obj(:,1)+0.5)./900   ;			
+% obj(:,2) = (obj(:,2)-0.60)./350   ;			
+% obj(:,3) = obj(:,3)/8;			
+
+ 
+% me_cup
+% obj(:,1) = (obj(:,1)+0.2)./600   ;
+% obj(:,2) = (obj(:,2))./300   ;
+% obj(:,3) = obj(:,3)/8; 
+% 
+	
+
+		
+		
+% three_object		
+% 		
+% obj(:,1) = (obj(:,1)+0.0002).*2.5  ;		
+% obj(:,2) = obj(:,2)*2.2  ;		
+% obj(:,3) = obj(:,3)*80;		
+		
+		
+
+% 		
+
+
+% four_items  
+% obj(:,1) = ((obj(:,1)-0.13 )/420);
+% obj(:,2) = (obj(:,2) )/1200;
+% obj(:,3) = (obj(:,3))/18;
+
+% 
+% three_object		
+% obj(:,1) = (obj(:,1)+0.0002).*1.5  ;		
+% obj(:,2) = obj(:,2)*1.5  ;		
+% obj(:,3) = obj(:,3)*80;		
+		
+ 
+
+% two_cup
+% obj(:,1) = (obj(:,1) )./350   ;
+% obj(:,2) = (obj(:,2) )./450   ;
+% obj(:,3) = obj(:,3)/8; 
+% ironman		
+% obj(:,1) = (obj(:,1)+0.25)./450   ;		
+% obj(:,2) = (obj(:,2)-0.25)./350   ;		
+% obj(:,3) = obj(:,3)/13;	 
+
+
+% cube_cup_mug	
+% obj(:,1) = (obj(:,1)+0.25)./800   ;	
+% obj(:,2) = (obj(:,2)-0.15)./900   ;	
+% obj(:,3) = obj(:,3)/12;
+
+% ironman		
+% obj(:,1) = (obj(:,1)+0.25)./400   ;		
+% obj(:,2) = (obj(:,2)-0.40)./250   ;		
+% obj(:,3) = obj(:,3)/13;	
+% sad_life_increased
+% obj(:,1) = (obj(:,1)-0.2)./350   ;     
+% obj(:,2) = (obj(:,2)+2)./2500   ;     
+% obj(:,3) = obj(:,3)/7 ; 
+% d = 0.26;
+% ironman_increased	
+% obj(:,1) = (obj(:,1)+0.25)./600   ;     	
+% obj(:,2) = (obj(:,2)-0.3)./500   ;     	
+% obj(:,3) = obj(:,3)/7 ; 	
+
+% papilon
+% obj(:,1) = (obj(:,1))/3.5;
+% obj(:,2) = (obj(:,2))/3.5;]
+% obj(:,3) = obj(:,3)/8 ;
+% three_object		
+% 		
+% obj(:,1) = (obj(:,1)+0.0002).*2.5  ;		
+% obj(:,2) = obj(:,2)*2.2  ;		
+% obj(:,3) = obj(:,3)*80;		
+
+% % for 720X720
+ 
+% 	
+% % max(obj) - min(obj)	
+
+% sad_life
+% obj(:,1) = ((obj(:,1)-0.16 )/300);
+% obj(:,2) = (obj(:,2)+2.25 )/2200;
+% obj(:,3) = (obj(:,3))/20;
+% 
+% obj_depth = max(obj(:,3)) - min(obj(:,3))	
+% d = 0.25;
+	
+four_items
+obj(:,1) = ((obj(:,1)+0.15 )/350);
+obj(:,2) = (obj(:,2) )/850;
+obj(:,3) = (obj(:,3))/18;
+
+ 
+ 
+max(obj)	
+min(obj)	
+% 	
+% % max(obj) - min(obj)	
+obj_depth = max(obj(:,3)) - min(obj(:,3))	
+% d = 0.35;
+d = 0.2;
+obj_z = (obj(:,3));
+[Cut,~,idx] = unique(obj_z);
+obj_no = accumarray(idx(:),1);
+
+figure;scatter([1:length(Cut)],Cut);
 file_type = '.bmp';
 
 %% Hologram parameter
 
-Hologram_resolution_x = 1280;
-Hologram_resolution_y = 720;  % Hologram resolution
+Hologram_resolution_x = 1024;
+Hologram_resolution_y = 1024;  % Hologram resolution
 Hologram_resolution = strcat(num2str(Hologram_resolution_x),'X', num2str(Hologram_resolution_y)) ;                     % Hologram resolution
 % Hologram_sampling_interval = 3.9e-6;            % Hologram sampling interval
 Hologram_sampling_interval = 8e-6; %8e-6;%            % Hologram sampling interval
@@ -313,12 +444,12 @@ Nyy = (round (obj(:,2)./Hologram_sampling_interval)+(Hologram_resolution_y)/2 );
 
 
 lambda = [632.8e-9 532e-9 473e-9]; %RGB;
- k = 2*pi./lambda;
+k = 2*pi./lambda;
 
 %% Fresnel propagation field
 
-ROWS= Hologram_resolution_x;
-COLS= Hologram_resolution_y;
+ROWS = Hologram_resolution_x;
+COLS = Hologram_resolution_y;
 v=Hologram_sampling_interval.*(ones(COLS,1)*(-ROWS/2:ROWS/2-1))';
 h=Hologram_sampling_interval.*(ones(ROWS,1)*(-COLS/2:COLS/2-1));
 
@@ -327,48 +458,31 @@ h=Hologram_sampling_interval.*(ones(ROWS,1)*(-COLS/2:COLS/2-1));
 
 
 
-obj_z = (obj(:,3));
-[Cut,~,idx] = unique(obj_z);
-obj_no = accumarray(idx(:),1);
-
-figure;scatter([1:length(Cut)],Cut);
 
 
 
-% WRP_list= [ 2,4,8,16,32,64];
-WRP_list= [64];
+
+ 
+WRP_list= [2];
+%   2, 4, 7, 14, 28, 49, 98
+% WRP_list= [2, 4, 8,16,32,64];
 prev_wrp_no = -1;
-
-% first_part = repmat(3,1,80);
-%  second_part = repmat(7,1,11);
-% vectorSizes = [first_part,second_part];
-%  Cut(end)=[];
-      depth_ranges= mat2cell(Cut',1,vectorSizes)';
 project_name = mfilename;
-sub_dir = strcat('D:\Mathlab\wrp\',obj_name,'\updated',sprintf('_%0.9f',Hologram_sampling_interval),'\',num2str(Hologram_resolution),'\obj_depth',num2str(obj_depth),'\d_',num2str(d),'\layers_',sprintf('%d',length(Cut)),'\',project_name);
-focus_location ='micky2';
-mkdir(sub_dir);
-file_name = strcat('time','.txt');
-full_file_name = fullfile(sub_dir, file_name);
-fileID = fopen(full_file_name,'a');
+sub_dir = strcat('D:\Mathlab\wrp\final',obj_name,'',sprintf('_%0.9f',Hologram_sampling_interval),'\',num2str(Hologram_resolution),'\obj_depth',num2str(obj_depth),'\d_',num2str(d),'\layers_',sprintf('%d',length(Cut)),'\',project_name);
+focus_location ='fly';
+% mkdir(sub_dir);
+% file_name = strcat('time', datestr(now, 'dd'),'.txt');
+% time_file_name = fullfile(sub_dir, file_name);
+% fileID = fopen(time_file_name,'a');
 
+ 
 for ii= 1: length(WRP_list)
     
     original=zeros(Hologram_resolution_x,Hologram_resolution_y,3);
-    total_wrp = WRP_list(ii);
-    
-    % % %     %     conventional M-WRP Depth range segmentation
-    
-    
-    
-    %     vectorSizes = [ repmat(2,1,100), repmat(3,1,20)]
-    %   depth_ranges= mat2cell(Cut',1,vectorSizes)';
+    total_wrp = WRP_list(ii); 
     
     depth_ranges = depth_segmentation_conventional(Cut,total_wrp);
-    
-    
-    % load DM-WRP segmentation
-    %             core_dmwrp;
+     
     %
     %% data storage
     
@@ -383,17 +497,13 @@ for ii= 1: length(WRP_list)
     end
     
     layer_diff = abs(Cut(1)-Cut(2));
-    
-    
-    
-    
-    %
+     
     WRPHologram = zeros(Hologram_resolution_x,Hologram_resolution_y,3);
     
     %
     tic
     for color_index = 1:length(lambda)
-        layer = 1;
+%         layer = 1;
        
         counter =1;
         for nwrp = 1:length(depth_ranges)
@@ -412,27 +522,27 @@ for ii= 1: length(WRP_list)
             indexes = find(obj_z>= min_z & obj_z <= max_z);
             
             z = (z_wrp-obj_z(indexes));
-%                                     N_all = round(abs(lambda(color_index).*z./(Hologram_sampling_interval^2)/2)+0.5).*2-1 ;        %sampling size of N
+           
+            
+            
+%                  N_all = round(abs(lambda(color_index).*z./(Hologram_sampling_interval^2)/2)+0.5).*2-1;  
+%                     N_all = round(abs(lambda(color_index).*z./(Hologram_sampling_interval^2)));%sampling size of N
             %
             N_all = round(2*abs(z).*tan(lambda(color_index)./(2.*Hologram_sampling_interval))./Hologram_sampling_interval);
             
-            %                         for p = 1 :length(depth_range)
-            %                             zp = abs(z_wrp-depth_range(p));
-            %                             active(layer) = round(zp.*tan(lambda(color_index)./(2.*Hologram_sampling_interval))./Hologram_sampling_interval) ;
-            %                             layer = layer+1;
-            %                         end
-            % %
+     
+%             
 %                         if min(N_all) ==0
 %                             return
 %                         end
             Nx = Nxx(indexes);
             Ny = Nyy(indexes);
             
+          
+            
+            color_current_depth_range = obj_c(indexes ,color_index);
             
             
-            color_current_depth_range = obj_c(indexes ,:);
-            
-            %
             for index = 1: length(indexes)
                 
                 [y_run, x_run]= meshgrid((-(N_all(index)-1)/2:(N_all(index)-1)/2)*Hologram_sampling_interval,(-(N_all(index)-1)/2:(N_all(index)-1)/2)*Hologram_sampling_interval);
@@ -452,7 +562,9 @@ for ii= 1: length(WRP_list)
                     nyn=Hologram_resolution_y;
                 end
                 
-                Sub_hologram = color_current_depth_range(index,color_index)*exp(1j*k(color_index)*r(1:xn,1:yn))./r(1:xn,1:yn) ;
+                 Sub_hologram = color_current_depth_range(index)*exp(1j*rand*2*pi)*exp(1j*k(color_index)*r(1:xn,1:yn))./r(1:xn,1:yn) ;
+                   
+
                 WRP(Nx(index):nxn-1,Ny(index):nyn-1) =  WRP(Nx(index):nxn-1,Ny(index):nyn-1)+ Sub_hologram;
                 %                 *exp(1j*rand*2*pi)
                 %                 *exp(1j*k(c).*r(1:xn,1:yn))./r(1:xn,1:yn);
@@ -471,37 +583,37 @@ for ii= 1: length(WRP_list)
             
             d_wrp_to_hologram = abs(d -  z_wrp);
             WRPHologram(:,:,color_index)  = WRPHologram(:,:,color_index) + FresnelPropagation((WRP), Hologram_sampling_interval, Hologram_sampling_interval, d_wrp_to_hologram, lambda(color_index));
-            
+%             
         end
         
     end
     
-    
-    close all %120
-    for p = 37
-        for c=1:3
+     
+    end_time = toc
+      close all %120
+    for p = 57
+        for c= 1:3
             d2 = d+0.002 - p*0.0010
             original_red =  FresnelPropogation(k(c),v, h,-d2,gather(WRPHologram(:,:,c)));
             original_abs_red= abs((original_red));
             original(:,:,c)=255.*(original_abs_red./max(max(original_abs_red)));
-%             figure; imshow(rot90(abs(original(:,:,c)))*10,[]);title(p);
-%             toc;
-            %                            file_name = strcat(project_name,'_color_',num2str(color_index),'_d_',num2str(d),'threshold_',num2str(total_wrp),'_total_layer_',num2str(length(Cut)),'_recon_d_',num2str(d2),file_type);
-            %             fullFileName = fullfile(sub_dir,file_name);
-            %                     save_hologram(gather(WRPHologram),fullFileName);
+            %             figure; imshow(rot90(abs(original(:,:,c)))*10,[]);title(p);
+%                         toc;
+%                                        file_name = strcat( 'color_',num2str(c),file_type);
+%                         fullFileName = fullfile(sub_dir,file_name);
+%                                 save_hologram(gather(WRPHologram(:,:,c)),fullFileName);
             %              imwrite((uint8((original))),fullFileName);
-            %           imwrite(uint8(rot90((original(:,:,color_index)))*10),fullFileName);
+            %                       imwrite(uint8(rot90((original(:,:,co    `lor_index)))*10),fullFileName);
         end
-%         figure;   imshow(rot90(uint8((original*2))),[]);
+                figure;   imshow(rot90(uint8((original*3))),[]);title(p);
     end
     
- 
-    end_time = toc;
+
     %     fprintf('counter: %d color: %d wrp: %d \n',counter ,color_index, length(depth_ranges)); %length(depth_ranges)
     %     imshow(rot90(uint8((original*2))),[]);
     %  uint8(round(RGB64*255));
     %     figure;imshow((uint8((original))),[]);
-    file_name = strcat('cactus','_d_',num2str(d),'WRP_',num2str(length(depth_ranges)),'_total_layer_',num2str(length(Cut)),'_recon_d_',num2str(d2),file_type);
+    file_name = strcat('cube','_d_',num2str(d),'WRP_',num2str(length(depth_ranges)),'_total_layer_',num2str(length(Cut)),'_recon_d_',num2str(d2),file_type);
     fullFileName = fullfile(sub_dir,file_name);
     imwrite((uint8((original*2))),fullFileName);
     fprintf(fileID,' %d %0.3f \n ',length(depth_ranges), end_time);
@@ -511,8 +623,11 @@ end
 
 %% reconstruction for red
 fclose(fileID);
-x = time(:,1);
-y = time(:,2);
+time = load(time_file_name);
+x = time(:,1)
+y = time(:,2)
+sub_dir
+
 plot( x, y);
 idx = islocalmin(y);
 figure(1)

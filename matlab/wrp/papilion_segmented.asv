@@ -1,0 +1,66 @@
+addpath('D:\Mathlab\wrp\data') 
+close all;
+obj_name = 'papilon';
+
+pc = pcread (strcat(obj_name,'.ply'));
+pcshow(pc);xlabel('X');ylabel('Y');zlabel('Z');
+
+roi = [  1 512  1   512  205 250 ]; %% 165 
+pc_top = select(pc,findPointsInROI(pc,roi));
+figure; pcshow(pc_top)
+
+obj_top = im2double(pc_top.Location);
+obj_top(:,3) = max(obj_top(:,3));
+% obj_c_top = im2double(pc_top.Color); 
+
+pc_new = pointCloud(obj_top);
+pc_new.Color=pc_top.Color
+figure,pcshow(pc_new); xlabel('X'); ylabel('Y');zlabel('Z');
+
+
+
+%% middle
+% roi = [  1 512  1   512  1 205 ]; %% 165 
+% pc = select(pc,findPointsInROI(pc,roi));
+% pcshow(pc)
+
+roi = [  1 512  1   512  1 100 ]; %% 165 
+pc_middle = select(pc,findPointsInROI(pc,roi));
+figure;pcshow(pc_middle)
+
+
+obj_middle = im2double(pc_middle.Location);
+obj_middle(:,3) = min(obj_middle(:,3));
+
+
+pc_new_middle = pointCloud(obj_middle);
+pc_new_middle.Color=pc_middle.Color;
+figure,pcshow(pc_new_middle); xlabel('X'); ylabel('Y');zlabel('Z');
+
+%% bottom
+
+roi = [  1 512  1   512  100 250 ]; %% 165 
+pc_last = select(pc,findPointsInROI(pc,roi));
+figure;pcshow(pc_last)
+
+obj_last = im2double(pc_last.Location);
+obj_last(:,3) = min(obj_last(:,3));
+
+
+pc_new_last = pointCloud(obj_last);
+pc_new_last.Color=pc_last.Color;
+figure,pcshow(pc_new_last); xlabel('X'); ylabel('Y');zlabel('Z');
+%% merge all
+
+ptCloud = pcmerge(pc_new,pcmerge(pc_new_middle,pc_new_last,1),1);
+pcshow(ptCloud);
+
+
+
+obj(:,1) = obj(:,1)/max(obj(:,1)) -0.5;
+obj(:,2) = obj(:,2)/max(obj(:,2)) -0.5 ;
+obj(:,3) = obj(:,3)/max(obj(:,3));
+
+obj(:,1) = obj(:,1) /100;
+obj(:,2) = obj(:,2) /100;
+
